@@ -6,3 +6,9 @@ export type CategoryResponse = {
 export type CreateCategoryRequest = {
   name: string;
 };
+
+export type SearchCategoryRequest = {
+  name?: string;
+  size?: number;
+  cursor?: number;
+};

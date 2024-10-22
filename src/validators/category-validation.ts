@@ -4,7 +4,14 @@ export class CategoryValidation {
   static readonly CREATE = z.object({
     name: z
       .string()
-      .min(1, { message: "Username at least 1 characters long" })
-      .max(100, { message: "Username must be 100 characters at most" }),
+      .min(1, { message: "Category at least 1 characters long" })
+      .max(100, { message: "Category must be 100 characters at most" }),
+  });
+  static readonly SEARCH = z.object({
+    name: z
+      .string()
+      .max(100, { message: "Category must be 100 characters at most" })
+      .optional(),
+    cursor: z.number().optional(),
   });
 }
