@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CASHIER
+}
+
+model User {
+  username      String  @id @db.VarChar(100)
+  password      String  @db.VarChar(100)
+  name          String  @db.VarChar(100)
+  refresh_token String? @db.Text
+  role          Role
+
+  created_products        Product[]       @relation("created_by")
+  updated_products        Product[]       @relation("updated_by")
+  created_payment_methods PaymentMethod[] @relation("payment_method_created_by")
+  updated_payment_methods PaymentMethod[] @relation("payment_method_updated_by")
+
+  @@map("users")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(100)
+
+  Product Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id                  Int      @id @default(autoincrement())
+  code                String   @unique @db.VarChar(10)
+  name                String   @db.VarChar(100)
+  stock               Int
+  price               BigInt
+  category_id         Int
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  created_by_username String   @db.VarChar(100)
+  updated_by_username String   @db.VarChar(100)
+
+  category   Category @relation(fields: [category_id], references: [id])
+  created_by User     @relation("created_by", fields: [created_by_username], references: [username])
+  updated_by User     @relation("updated_by", fields: [updated_by_username], references: [username])
+
+  @@index([code])
+  @@map("products")
+}
+
+model PaymentMethod {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  description String? @db.Text
+  is_active   Boolean @default(true)
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  created_by_username String   @db.VarChar(100)
+  updated_by_username String   @db.VarChar(100)
+
+  created_by User @relation("payment_method_created_by", fields: [created_by_username], references: [username])
+  updated_by User @relation("payment_method_updated_by", fields: [updated_by_username], references: [username])
+
+  @@map("payment_methods")
+}
+
+model ProductTransaction {
+  transaction_id    String   @id @db.VarChar(10)
+  customer_name     String   @db.VarChar(100)
+  total_quantity    Int
+  total_amount      BigInt
+  payment_method_id Int
+  payment_method    String   @db.VarChar(100)
+  username          String   @db.VarChar(100)
+  service_by        String   @db.VarChar(100)
+  service_charge    BigInt
+  issued_at         DateTime @default(now())
+
+  details ProductTransactionDetail[]
+
+  @@map("product_transactions")
+}
+
+model ProductTransactionDetail {
+  id                    Int    @id @default(autoincrement())
+  transaction_id        String @db.VarChar(10)
+  product_id            Int
+  product_name          String @db.VarChar(100)
+  product_price         BigInt
+  product_category_id   Int
+  product_category_name String @db.VarChar(100)
+  quantity              Int
+  amount                BigInt
+
+  transaction ProductTransaction @relation(fields: [transaction_id], references: [transaction_id])
+
+  @@map("product_transaction_details")
+}
