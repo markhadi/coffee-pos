@@ -12,3 +12,8 @@ export type SearchCategoryRequest = {
   size?: number;
   cursor?: number;
 };
+
+export type UpdateCategoryRequest = {
+  id: number;
+  name: string;
+};

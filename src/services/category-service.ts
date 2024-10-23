@@ -1,8 +1,10 @@
 import { prismaClient } from "../apps/database";
+import { ResponseError } from "../errors/response-error";
 import {
   CategoryResponse,
   CreateCategoryRequest,
   SearchCategoryRequest,
+  UpdateCategoryRequest,
 } from "../models/category-model";
 import { Pageable } from "../models/page";
 import { CategoryValidation } from "../validators/category-validation";
@@ -66,5 +68,32 @@ export class CategoryService {
         hasMore,
       },
     };
+  }
+  static async isCategoryExists(id: number): Promise<CategoryResponse> {
+    const category = await prismaClient.category.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!category) {
+      throw new ResponseError(404, "Category is not found");
+    }
+    return category;
+  }
+  static async update(
+    request: UpdateCategoryRequest
+  ): Promise<CategoryResponse> {
+    const updateRequest = Validation.validate(
+      CategoryValidation.UPDATE,
+      request
+    );
+    await this.isCategoryExists(updateRequest.id);
+    const category = await prismaClient.category.update({
+      where: {
+        id: updateRequest.id,
+      },
+      data: updateRequest,
+    });
+    return category;
   }
 }

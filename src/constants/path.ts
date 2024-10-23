@@ -5,4 +5,5 @@ export const Path = {
   LoginUser: prefix + "/users/login",
   CreateCategory: prefix + "/categories",
   SearchCategory: prefix + "/categories",
+  UpdateCategory: prefix + "/categories/:id",
 };

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   CreateCategoryRequest,
   SearchCategoryRequest,
+  UpdateCategoryRequest,
 } from "../models/category-model";
 import { CategoryService } from "../services/category-service";
 
@@ -26,6 +27,16 @@ export class CategoryController {
       } as SearchCategoryRequest;
       const response = await CategoryService.search(request);
       res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request: UpdateCategoryRequest = req.body as UpdateCategoryRequest;
+      request.id = Number(req.params.id);
+      const response = await CategoryService.update(request);
+      res.status(200).json({ data: response });
     } catch (error) {
       next(error);
     }

@@ -14,4 +14,11 @@ export class CategoryValidation {
       .optional(),
     cursor: z.number().optional(),
   });
+  static readonly UPDATE = z.object({
+    id: z.number(),
+    name: z
+      .string()
+      .min(1, { message: "Category at least 1 characters long" })
+      .max(100, { message: "Category must be 100 characters at most" }),
+  });
 }
