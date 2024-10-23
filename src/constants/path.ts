@@ -6,4 +6,5 @@ export const Path = {
   CreateCategory: prefix + "/categories",
   SearchCategory: prefix + "/categories",
   UpdateCategory: prefix + "/categories/:id",
+  RemoveCategory: prefix + "/categories/:id",
 };

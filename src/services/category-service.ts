@@ -96,4 +96,13 @@ export class CategoryService {
     });
     return category;
   }
+  static async remove(id: number): Promise<CategoryResponse> {
+    await this.isCategoryExists(id);
+    const category = await prismaClient.category.delete({
+      where: {
+        id,
+      },
+    });
+    return category;
+  }
 }

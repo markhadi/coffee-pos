@@ -41,4 +41,13 @@ export class CategoryController {
       next(error);
     }
   }
+  static async remove(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const response = await CategoryService.remove(id);
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
