@@ -87,7 +87,7 @@ model ProductTransaction {
   payment_method    String   @db.VarChar(100)
   username          String   @db.VarChar(100)
   service_by        String   @db.VarChar(100)
-  service_charge    Int
+  service_charge    Float
   issued_at         DateTime @default(now())
 
   details ProductTransactionDetail[]

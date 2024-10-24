@@ -37,3 +37,10 @@ export async function verifyToken(
     );
   });
 }
+
+export function generateTransactionId(): string {
+  const timestamp: number = Math.floor(Date.now() / 1000);
+  const last8Digits: string = timestamp.toString().slice(-8);
+  const transactionId: string = `TF${last8Digits}`;
+  return transactionId;
+}
