@@ -18,11 +18,14 @@ export class TransactionService {
       TransactionValidation.CREATE,
       request
     );
-    await PaymentService.isPaymentMethodExists(createRequest.payment_method_id);
+    const payment = await PaymentService.isPaymentMethodExists(
+      createRequest.payment_method_id
+    );
     const transactionId = generateTransactionId();
     const transaction = await prismaClient.productTransaction.create({
       data: {
         ...createRequest,
+        payment_method: payment.name,
         transaction_id: transactionId,
         service_by: user.username,
         username: user.username,

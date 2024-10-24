@@ -34,10 +34,6 @@ export class TransactionValidation {
       message: nonnegative("Total Amount"),
     }),
     payment_method_id: z.number(),
-    payment_method: z
-      .string()
-      .max(100, { message: maximumString(100, "Payment Method Name") })
-      .optional(),
     service_charge: z
       .number()
       .nonnegative({ message: nonnegative("Service Charge") }),

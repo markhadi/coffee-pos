@@ -7,7 +7,6 @@ export type CreateTransactionRequest = {
   total_quantity: number;
   total_amount: number;
   payment_method_id: number;
-  payment_method: string;
   service_charge: number;
 };
 // static readonly CREATE = z.object({
