@@ -23,7 +23,19 @@ export const errorMiddleware = async (
       errors: error.message,
     });
   } else if (error instanceof PrismaClientKnownRequestError) {
-    if (error.code === "P2003") {
+    if (error.code === "P2002") {
+      // Handle unique constraint violation with 409 Conflict
+      const target = error.meta?.target;
+      const fields = Array.isArray(target)
+        ? target.join(", ")
+        : typeof target === "string"
+        ? target
+        : "unique field";
+
+      res.status(409).json({
+        errors: `Duplicate entry: ${fields} already exists`,
+      });
+    } else if (error.code === "P2003") {
       res.status(400).json({
         errors:
           "The operation failed because a conflicting data constraint was encountered",

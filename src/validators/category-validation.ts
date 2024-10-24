@@ -1,16 +1,17 @@
 import { z } from "zod";
+import { maximumString, minimumString } from "./validation-message";
 
 export class CategoryValidation {
   static readonly CREATE = z.object({
     name: z
       .string()
-      .min(1, { message: "Category at least 1 characters long" })
-      .max(100, { message: "Category must be 100 characters at most" }),
+      .min(1, { message: minimumString(1, "Name") })
+      .max(100, { message: maximumString(100, "Name") }),
   });
   static readonly SEARCH = z.object({
     name: z
       .string()
-      .max(100, { message: "Category must be 100 characters at most" })
+      .max(100, { message: maximumString(100, "Name") })
       .optional(),
     cursor: z.number().optional(),
   });
@@ -18,7 +19,7 @@ export class CategoryValidation {
     id: z.number(),
     name: z
       .string()
-      .min(1, { message: "Category at least 1 characters long" })
-      .max(100, { message: "Category must be 100 characters at most" }),
+      .min(1, { message: minimumString(1, "Name") })
+      .max(100, { message: maximumString(100, "Name") }),
   });
 }

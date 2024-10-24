@@ -1,37 +1,35 @@
 import { z } from "zod";
 import { role } from "../models/user-model";
-import { generateRoleMessage } from "../utilities";
+import {
+  maximumString,
+  minimumString,
+  roleMessage,
+} from "./validation-message";
 
 export class UserValidation {
   static readonly CREATE = z.object({
     username: z
       .string()
-      .min(4, { message: "Username at least 4 characters long" })
-      .max(100, { message: "Username must be 100 characters at most" }),
+      .min(4, { message: minimumString(4, "Username") })
+      .max(100, { message: maximumString(100, "Username") }),
     password: z
       .string()
-      .min(4, { message: "Password at least 4 characters long" })
-      .max(100, { message: "Password must be 100 characters at most" }),
+      .min(4, { message: minimumString(4, "Password") })
+      .max(100, { message: maximumString(100, "Password") }),
     name: z
       .string()
-      .min(4, { message: "Name at least 4 characters long" })
-      .max(100, { message: "Name must be 100 characters at most" }),
-    role: z.enum(role, { message: generateRoleMessage(role) }),
+      .min(4, { message: minimumString(4, "Name") })
+      .max(100, { message: maximumString(100, "Name") }),
+    role: z.enum(role, { message: roleMessage(role) }),
   });
   static readonly LOGIN = z.object({
     username: z
       .string()
-      .min(4, { message: "Username at least 4 characters long" })
-      .max(100, { message: "Username must be 100 characters at most" }),
+      .min(4, { message: minimumString(4, "Username") })
+      .max(100, { message: maximumString(100, "Username") }),
     password: z
       .string()
-      .min(4, { message: "Password at least 4 characters long" })
-      .max(100, { message: "Password must be 100 characters at most" }),
+      .min(4, { message: minimumString(4, "Password") })
+      .max(100, { message: maximumString(100, "Password") }),
   });
 }
-// export type CreateUserRequest = {
-//     username: string;
-//     name: string;
-//     password: string;
-//     role: Role;
-//   };

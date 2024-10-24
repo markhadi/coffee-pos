@@ -37,17 +37,3 @@ export async function verifyToken(
     );
   });
 }
-
-export function generateRoleMessage(roles: readonly string[]): string {
-  if (roles.length === 1) {
-    throw new Error("Roles array must contain at least two elements");
-  }
-
-  if (roles.length === 2) {
-    return `Select either ${roles[0]} or ${roles[1]}`;
-  }
-
-  const lastRole = roles[roles.length - 1];
-  const initialRoles = roles.slice(0, -1);
-  return `Select either ${initialRoles.join(", ")} or ${lastRole}`;
-}
