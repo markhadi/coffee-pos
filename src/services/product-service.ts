@@ -121,4 +121,14 @@ export class ProductService {
     });
     return product;
   }
+  static async remove(id: number): Promise<ProductResponse> {
+    const productExist = await this.isProductExists(id);
+    await CategoryService.isCategoryExists(productExist.category_id);
+    const product = await prismaClient.product.delete({
+      where: {
+        id,
+      },
+    });
+    return product;
+  }
 }
