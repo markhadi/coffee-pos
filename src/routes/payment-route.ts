@@ -5,3 +5,4 @@ import { PaymentController } from "../controllers/payment-controller";
 export const paymentRouter = Router();
 
 paymentRouter.post(Path.CreatePayment, PaymentController.create);
+paymentRouter.get(Path.SearchPayment, PaymentController.search);

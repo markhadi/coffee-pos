@@ -13,6 +13,14 @@ export class PaymentValidation {
       .max(100, { message: maximumString(100, "Description") }),
     is_active: z.boolean(),
   });
+  static readonly SEARCH = z.object({
+    search: z
+      .string()
+      .max(100, { message: maximumString(100, "Search") })
+      .optional(),
+    size: z.number().optional(),
+    cursor: z.number().optional(),
+  });
 }
 
 // model PaymentMethod {

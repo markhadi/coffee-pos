@@ -13,6 +13,7 @@ export class CategoryValidation {
       .string()
       .max(100, { message: maximumString(100, "Name") })
       .optional(),
+    size: z.number().optional(),
     cursor: z.number().optional(),
   });
   static readonly UPDATE = z.object({

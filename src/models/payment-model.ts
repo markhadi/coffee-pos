@@ -7,3 +7,9 @@ export type CreatePaymentMethodRequest = {
   description?: string;
   is_active: boolean;
 };
+
+export type SearchPaymentMethodRequest = {
+  search?: string;
+  size?: number;
+  cursor?: number;
+};
