@@ -13,3 +13,7 @@ export type SearchPaymentMethodRequest = {
   size?: number;
   cursor?: number;
 };
+
+export type UpdatePaymentMethodRequest = CreatePaymentMethodRequest & {
+  id: number;
+};

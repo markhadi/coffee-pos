@@ -13,4 +13,6 @@ export const Path = {
   RemoveProduct: prefix + "/products/:id",
   CreatePayment: prefix + "/payments",
   SearchPayment: prefix + "/payments",
+  UpdatePayment: prefix + "/payments/:id",
+  RemovePayment: prefix + "/payments/:id",
 };

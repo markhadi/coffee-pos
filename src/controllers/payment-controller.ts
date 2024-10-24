@@ -3,6 +3,7 @@ import { UserRequest } from "../types/user-request";
 import {
   CreatePaymentMethodRequest,
   SearchPaymentMethodRequest,
+  UpdatePaymentMethodRequest,
 } from "../models/payment-model";
 import { PaymentService } from "../services/payment-service";
 
@@ -26,6 +27,17 @@ export class PaymentController {
       } as SearchPaymentMethodRequest;
       const response = await PaymentService.search(request);
       res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async update(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const request: UpdatePaymentMethodRequest =
+        req.body as UpdatePaymentMethodRequest;
+      request.id = Number(req.params.id);
+      const response = await PaymentService.update(req.user!, request);
+      res.status(200).json({ data: response });
     } catch (error) {
       next(error);
     }

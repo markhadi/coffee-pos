@@ -3,11 +3,13 @@ import {
   CreatePaymentMethodRequest,
   PaymentMethodResponse,
   SearchPaymentMethodRequest,
+  UpdatePaymentMethodRequest,
 } from "../models/payment-model";
 import { Validation } from "../validators/validation";
 import { PaymentValidation } from "../validators/payment-validation";
 import { prismaClient } from "../apps/database";
 import { Pageable } from "../models/page";
+import { ResponseError } from "../errors/response-error";
 
 export class PaymentService {
   static async create(
@@ -79,5 +81,38 @@ export class PaymentService {
         hasMore,
       },
     };
+  }
+  static async isPaymentMethodExists(
+    id: number
+  ): Promise<PaymentMethodResponse> {
+    const payment = await prismaClient.paymentMethod.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!payment) {
+      throw new ResponseError(404, "Payment Method is not found");
+    }
+    return payment;
+  }
+  static async update(
+    user: User,
+    request: UpdatePaymentMethodRequest
+  ): Promise<PaymentMethodResponse> {
+    const updateRequest = Validation.validate(
+      PaymentValidation.UPDATE,
+      request
+    );
+    await this.isPaymentMethodExists(updateRequest.id);
+    const payment = await prismaClient.paymentMethod.update({
+      where: {
+        id: updateRequest.id,
+      },
+      data: {
+        ...updateRequest,
+        updated_by_username: user.username,
+      },
+    });
+    return payment;
   }
 }
