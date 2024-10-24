@@ -19,4 +19,11 @@ export class ProductValidation {
     price: z.number().nonnegative({ message: nonnegative("Price") }),
     category_id: z.number(),
   });
+  static readonly SEARCH = z.object({
+    name: z
+      .string()
+      .max(100, { message: maximumString(100, "Name") })
+      .optional(),
+    cursor: z.number().optional(),
+  });
 }

@@ -1,9 +1,14 @@
 import { User } from "@prisma/client";
 import { prismaClient } from "../apps/database";
-import { CreateProductRequest, ProductResponse } from "../models/product-model";
+import {
+  CreateProductRequest,
+  ProductResponse,
+  SearchProductRequest,
+} from "../models/product-model";
 import { ProductValidation } from "../validators/product-validation";
 import { Validation } from "../validators/validation";
 import { CategoryService } from "./category-service";
+import { Pageable } from "../models/page";
 
 export class ProductService {
   static async create(
@@ -24,5 +29,58 @@ export class ProductService {
       },
     });
     return product;
+  }
+  static async search(
+    request: SearchProductRequest
+  ): Promise<Pageable<ProductResponse>> {
+    const searchRequest = Validation.validate(
+      ProductValidation.SEARCH,
+      request
+    );
+    const filters: any[] = [];
+    let orderBy = { id: "desc" as const };
+    if (searchRequest.search) {
+      filters.push({
+        OR: [
+          {
+            name: {
+              contains: searchRequest.search,
+            },
+          },
+          {
+            code: {
+              contains: searchRequest.search,
+            },
+          },
+        ],
+      });
+    }
+    const take = searchRequest.size || 10;
+    const cursor = searchRequest.cursor
+      ? { id: Number(searchRequest.cursor) }
+      : undefined;
+    const products = await prismaClient.product.findMany({
+      where: {
+        AND: filters,
+      },
+      take: take + 1,
+      skip: cursor ? 1 : 0,
+      cursor,
+      orderBy,
+    });
+    const hasMore = products.length === take + 1;
+    if (hasMore) {
+      products.pop();
+    }
+    const nextCursor =
+      products.length === take ? products[products.length - 1].id : undefined;
+    return {
+      data: products,
+      paging: {
+        total: products.length,
+        cursor: nextCursor,
+        hasMore,
+      },
+    };
   }
 }

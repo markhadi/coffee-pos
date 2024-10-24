@@ -5,3 +5,4 @@ import { ProductController } from "../controllers/product-controller";
 export const productRouter = Router();
 
 productRouter.post(Path.CreateProduct, ProductController.create);
+productRouter.get(Path.SearchProduct, ProductController.search);

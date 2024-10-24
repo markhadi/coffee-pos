@@ -9,3 +9,9 @@ export type CreateProductRequest = {
   price: number;
   category_id: number;
 };
+
+export type SearchProductRequest = {
+  search?: string;
+  size?: number;
+  cursor?: number;
+};
