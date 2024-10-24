@@ -26,4 +26,18 @@ export class ProductValidation {
       .optional(),
     cursor: z.number().optional(),
   });
+  static readonly UPDATE = z.object({
+    id: z.number(),
+    code: z
+      .string()
+      .min(1, { message: minimumString(1, "Code") })
+      .max(10, { message: maximumString(10, "Code") }),
+    name: z
+      .string()
+      .min(1, { message: minimumString(1, "Name") })
+      .max(100, { message: maximumString(100, "Name") }),
+    stock: z.number().nonnegative({ message: nonnegative("Stock") }),
+    price: z.number().nonnegative({ message: nonnegative("Price") }),
+    category_id: z.number(),
+  });
 }

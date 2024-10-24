@@ -9,4 +9,6 @@ export const Path = {
   RemoveCategory: prefix + "/categories/:id",
   CreateProduct: prefix + "/products",
   SearchProduct: prefix + "/products",
+  UpdateProduct: prefix + "/products/:id",
+  RemoveProduct: prefix + "/products/:id",
 };

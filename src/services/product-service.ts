@@ -3,12 +3,15 @@ import { prismaClient } from "../apps/database";
 import {
   CreateProductRequest,
   ProductResponse,
+  ProductResponseCategoryIncluded,
   SearchProductRequest,
+  UpdateProductRequest,
 } from "../models/product-model";
 import { ProductValidation } from "../validators/product-validation";
 import { Validation } from "../validators/validation";
 import { CategoryService } from "./category-service";
 import { Pageable } from "../models/page";
+import { ResponseError } from "../errors/response-error";
 
 export class ProductService {
   static async create(
@@ -32,7 +35,7 @@ export class ProductService {
   }
   static async search(
     request: SearchProductRequest
-  ): Promise<Pageable<ProductResponse>> {
+  ): Promise<Pageable<ProductResponseCategoryIncluded>> {
     const searchRequest = Validation.validate(
       ProductValidation.SEARCH,
       request
@@ -63,6 +66,9 @@ export class ProductService {
       where: {
         AND: filters,
       },
+      include: {
+        category: true,
+      },
       take: take + 1,
       skip: cursor ? 1 : 0,
       cursor,
@@ -82,5 +88,37 @@ export class ProductService {
         hasMore,
       },
     };
+  }
+  static async isProductExists(id: number): Promise<ProductResponse> {
+    const product = await prismaClient.product.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!product) {
+      throw new ResponseError(404, "Product is not found");
+    }
+    return product;
+  }
+  static async update(
+    user: User,
+    request: UpdateProductRequest
+  ): Promise<ProductResponse> {
+    const updateRequest = Validation.validate(
+      ProductValidation.UPDATE,
+      request
+    );
+    await this.isProductExists(updateRequest.id);
+    await CategoryService.isCategoryExists(updateRequest.category_id);
+    const product = await prismaClient.product.update({
+      where: {
+        id: updateRequest.id,
+      },
+      data: {
+        ...updateRequest,
+        updated_by_username: user.username,
+      },
+    });
+    return product;
   }
 }

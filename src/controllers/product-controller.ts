@@ -3,6 +3,7 @@ import { UserRequest } from "../types/user-request";
 import {
   CreateProductRequest,
   SearchProductRequest,
+  UpdateProductRequest,
 } from "../models/product-model";
 import { ProductService } from "../services/product-service";
 
@@ -25,6 +26,16 @@ export class ProductController {
       } as SearchProductRequest;
       const response = await ProductService.search(request);
       res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async update(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const request: UpdateProductRequest = req.body as UpdateProductRequest;
+      request.id = Number(req.params.id);
+      const response = await ProductService.update(req.user!, request);
+      res.status(200).json({ data: response });
     } catch (error) {
       next(error);
     }
