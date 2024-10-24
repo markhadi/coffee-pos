@@ -20,6 +20,7 @@ import {
   maximumString,
   nonnegative,
 } from "./validation-message";
+import { TransactionDetailValidation } from "./transaction-detail-validation";
 
 export class TransactionValidation {
   static readonly CREATE = z.object({
@@ -37,6 +38,13 @@ export class TransactionValidation {
     service_charge: z
       .number()
       .nonnegative({ message: nonnegative("Service Charge") }),
+    transaction_items: z.array(
+      z.object({
+        product_id: z.number(),
+        quantity: z.number().nonnegative({ message: nonnegative("Quantity") }),
+        amount: z.number().nonnegative({ message: nonnegative("Amount") }),
+      })
+    ),
   });
 }
 
@@ -44,10 +52,10 @@ export class TransactionValidation {
 //     isOpen: boolean;
 //     onClose: () => void;
 //     cartItems: {
-//       id: number;
-//       name: string;
-//       quantity: number;
-//       price: number;
+//       id: number; -> transaction_id
+//       name: string; -> product_id
+//       quantity: number; -> quantity
+//       price: number; -> amount
 //     }[];
 //     customer: string;
 //     paymentMethod: string;

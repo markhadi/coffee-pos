@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { prismaClient } from "../apps/database";
 import {
   CreateProductRequest,
@@ -93,6 +93,23 @@ export class ProductService {
     const product = await prismaClient.product.findUnique({
       where: {
         id,
+      },
+    });
+    if (!product) {
+      throw new ResponseError(404, "Product is not found");
+    }
+    return product;
+  }
+  static async get(
+    id: number,
+    tx: Prisma.TransactionClient
+  ): Promise<ProductResponseCategoryIncluded> {
+    const product = await tx.product.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        category: true,
       },
     });
     if (!product) {

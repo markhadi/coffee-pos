@@ -1,36 +1,78 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
+import { prismaClient } from "../apps/database";
+import { ResponseError } from "../errors/response-error";
+import { TransactionDetailResponse } from "../models/transaction-detail-model";
 import {
   CreateTransactionRequest,
   TransactionResponse,
 } from "../models/transaction-model";
-import { Validation } from "../validators/validation";
-import { TransactionValidation } from "../validators/transaction-validation";
-import { PaymentService } from "./payment-service";
-import { prismaClient } from "../apps/database";
 import { generateTransactionId } from "../utilities";
+import { TransactionValidation } from "../validators/transaction-validation";
+import { Validation } from "../validators/validation";
+import { PaymentService } from "./payment-service";
+import { TransactionDetailService } from "./transaction-detail-service";
 
 export class TransactionService {
   static async create(
     user: User,
     request: CreateTransactionRequest
-  ): Promise<TransactionResponse> {
+  ): Promise<
+    TransactionResponse & {
+      transaction_items: TransactionDetailResponse[];
+    }
+  > {
     const createRequest = Validation.validate(
       TransactionValidation.CREATE,
       request
     );
+    const {
+      transaction_items: transactionDetailRequests,
+      ...transactionRequest
+    } = createRequest;
     const payment = await PaymentService.isPaymentMethodExists(
-      createRequest.payment_method_id
+      transactionRequest.payment_method_id
     );
     const transactionId = generateTransactionId();
-    const transaction = await prismaClient.productTransaction.create({
-      data: {
-        ...createRequest,
-        payment_method: payment.name,
-        transaction_id: transactionId,
-        service_by: user.username,
-        username: user.username,
+    const result = await prismaClient.$transaction(async (tx) => {
+      // create transaction
+      const transaction = await tx.productTransaction.create({
+        data: {
+          ...transactionRequest,
+          payment_method: payment.name,
+          transaction_id: transactionId,
+          service_by: user.username,
+          username: user.username,
+        },
+      });
+      // create transaction detail
+      const transactionDetails = await Promise.all(
+        transactionDetailRequests.map(
+          async (transactionDetailRequest) =>
+            await TransactionDetailService.create(
+              {
+                ...transactionDetailRequest,
+                transaction_id: transaction.transaction_id,
+              },
+              tx
+            )
+        )
+      );
+      return { ...transaction, transaction_items: transactionDetails };
+    });
+    return result;
+  }
+  static async isTransactionExists(
+    transaction_id: string,
+    tx: Prisma.TransactionClient
+  ): Promise<TransactionResponse> {
+    const transaction = await tx.productTransaction.findUnique({
+      where: {
+        transaction_id,
       },
     });
+    if (!transaction) {
+      throw new ResponseError(404, "Transaction is not found");
+    }
     return transaction;
   }
 }

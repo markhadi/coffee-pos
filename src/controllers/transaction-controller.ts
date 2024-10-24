@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
-import { UserRequest } from "../types/user-request";
 import { CreateTransactionRequest } from "../models/transaction-model";
 import { TransactionService } from "../services/transaction-service";
+import { UserRequest } from "../types/user-request";
 
 export class TransactionController {
   static async create(req: UserRequest, res: Response, next: NextFunction) {
