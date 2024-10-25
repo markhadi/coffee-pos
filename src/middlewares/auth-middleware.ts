@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { prismaClient } from "../apps/database";
 import { UserRequest } from "../types/user-request";
 import { verifyToken } from "../utilities";
+import { ResponseError } from "../errors/response-error";
 
 export const authMiddleware = async (
   req: UserRequest,
@@ -29,6 +30,9 @@ export const authMiddleware = async (
           username: decoded.username,
         },
       });
+      if (!user) {
+        throw new ResponseError(404, "User is not found");
+      }
 
       req.user = user;
       next();
