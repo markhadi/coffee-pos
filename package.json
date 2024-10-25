@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest --runInBand",
     "build": "tsc",
-    "start": "node dist/main.js",
+    "start": "node dist/src/main.js",
     "start:migrate": "prisma migrate deploy && npm run start",
     "dev": "ts-node src/main.ts"
   },
