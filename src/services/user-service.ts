@@ -1,3 +1,4 @@
+import { Prisma, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { prismaClient } from "../apps/database";
 import { ResponseError } from "../errors/response-error";
@@ -13,16 +14,9 @@ import {
   UserResponse,
   UserTokenResponse,
 } from "../models/user-model";
-import {
-  decryptCursor,
-  encryptCursor,
-  generateToken,
-  verifyToken,
-} from "../utilities";
+import { decryptCursor, encryptCursor, verifyToken } from "../utilities";
 import { UserValidation } from "../validators/user-validation";
 import { Validation } from "../validators/validation";
-import { logger } from "../apps/logging";
-import { Prisma, User } from "@prisma/client";
 
 export class UserService {
   static async create(request: CreateUserRequest): Promise<UserTokenResponse> {
@@ -91,7 +85,10 @@ export class UserService {
     if (!user) {
       throw new ResponseError(401, "Invalid refresh token");
     }
-    await verifyToken(refreshToken, "refresh");
+    const decoded = await verifyToken(refreshToken, "refresh");
+    if (!decoded) {
+      throw new ResponseError(401, "Expired token");
+    }
     const accessToken = tokenizeUser(user, "access");
     return {
       access_token: accessToken,
