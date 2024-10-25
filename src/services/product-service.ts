@@ -6,9 +6,9 @@ import {
   CreateProductRequest,
   ProductResponse,
   ProductResponseCategoryIncluded,
+  SearchProductRequest,
   UpdateProductRequest,
 } from "../models/product-model";
-import { SearchUserRequest } from "../models/user-model";
 import { ProductValidation } from "../validators/product-validation";
 import { Validation } from "../validators/validation";
 import { CategoryService } from "./category-service";
@@ -34,7 +34,7 @@ export class ProductService {
     return product;
   }
   static async search(
-    request: SearchUserRequest
+    request: SearchProductRequest
   ): Promise<Pageable<ProductResponseCategoryIncluded>> {
     const searchRequest = Validation.validate(
       ProductValidation.SEARCH,
