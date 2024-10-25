@@ -7,6 +7,7 @@ import {
   UpdateUserRequest,
 } from "../models/user-model";
 import { UserService } from "../services/user-service";
+import { UserRequest } from "../types/user-request";
 
 export class UserController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -63,11 +64,18 @@ export class UserController {
       next(error);
     }
   }
-  static async update(req: Request, res: Response, next: NextFunction) {
+  static async update(req: UserRequest, res: Response, next: NextFunction) {
     try {
       const request: UpdateUserRequest = req.body as UpdateUserRequest;
       request.username = req.params.username;
       const response = await UserService.update(request);
+      if (response.username === request.username) {
+        res.clearCookie("refresh_token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "development" ? false : true,
+          sameSite: process.env.NODE_ENV === "development" ? false : "none",
+        });
+      }
       res.status(200).json({ data: response });
     } catch (error) {
       next(error);
