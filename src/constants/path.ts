@@ -2,6 +2,7 @@ const prefix = "/api";
 
 export const Path = {
   CreateUser: prefix + "/users",
+  SearchUser: prefix + "/users",
   LoginUser: prefix + "/users/login",
   RefreshUser: prefix + "/users/refresh",
   CreateCategory: prefix + "/categories",

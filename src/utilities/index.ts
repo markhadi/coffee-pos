@@ -1,4 +1,5 @@
 import jwt, { SignOptions, VerifyErrors } from "jsonwebtoken";
+import * as crypto from "crypto";
 
 export type TokenType = "access" | "refresh";
 const tokenSecret = (type: TokenType) =>
@@ -43,4 +44,29 @@ export function generateTransactionId(): string {
   const last8Digits: string = timestamp.toString().slice(-8);
   const transactionId: string = `TF${last8Digits}`;
   return transactionId;
+}
+
+export function encryptCursor(text: string): string {
+  const algorithm = "aes-256-cbc";
+  const key = crypto.scryptSync(process.env.USER_CURSOR_SECRET!, "salt", 32);
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return iv.toString("hex") + ":" + encrypted;
+}
+
+export function decryptCursor(text: string): string {
+  try {
+    const algorithm = "aes-256-cbc";
+    const key = crypto.scryptSync(process.env.USER_CURSOR_SECRET!, "salt", 32);
+    const [ivHex, encryptedHex] = text.split(":");
+    const iv = Buffer.from(ivHex, "hex");
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    let decrypted = decipher.update(encryptedHex, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  } catch (error) {
+    throw new Error("Invalid cursor");
+  }
 }

@@ -10,3 +10,4 @@ userRouter.post(
   roleMiddleware("ADMIN"),
   UserController.create
 );
+userRouter.get(Path.SearchUser, roleMiddleware("ADMIN"), UserController.search);

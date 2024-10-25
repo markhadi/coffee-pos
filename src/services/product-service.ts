@@ -1,17 +1,17 @@
 import { Prisma, User } from "@prisma/client";
 import { prismaClient } from "../apps/database";
+import { ResponseError } from "../errors/response-error";
+import { Pageable } from "../models/page";
 import {
   CreateProductRequest,
   ProductResponse,
   ProductResponseCategoryIncluded,
-  SearchProductRequest,
   UpdateProductRequest,
 } from "../models/product-model";
+import { SearchUserRequest } from "../models/user-model";
 import { ProductValidation } from "../validators/product-validation";
 import { Validation } from "../validators/validation";
 import { CategoryService } from "./category-service";
-import { Pageable } from "../models/page";
-import { ResponseError } from "../errors/response-error";
 
 export class ProductService {
   static async create(
@@ -34,7 +34,7 @@ export class ProductService {
     return product;
   }
   static async search(
-    request: SearchProductRequest
+    request: SearchUserRequest
   ): Promise<Pageable<ProductResponseCategoryIncluded>> {
     const searchRequest = Validation.validate(
       ProductValidation.SEARCH,

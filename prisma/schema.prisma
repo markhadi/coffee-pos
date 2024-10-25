@@ -19,11 +19,13 @@ enum Role {
 }
 
 model User {
-  username      String  @id @db.VarChar(100)
-  password      String  @db.VarChar(100)
-  name          String  @db.VarChar(100)
-  refresh_token String? @db.Text
+  username      String   @id @db.VarChar(100)
+  password      String   @db.VarChar(100)
+  name          String   @db.VarChar(100)
+  refresh_token String?  @db.Text
   role          Role
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   created_products        Product[]       @relation("created_by")
   updated_products        Product[]       @relation("updated_by")

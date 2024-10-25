@@ -9,6 +9,8 @@ export type UserResponse = {
   username: string;
   name: string;
   role: string;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type UserTokenResponse = {
@@ -32,29 +34,19 @@ export type RefreshUserRequest = {
   cookie: string;
 };
 
-export type UpdateUserCurrentRequest = {
-  name?: string;
-  password?: string;
-  currentPassword: string;
-};
-
-export type UpdateUserRequest = {
-  username: string;
-  name?: string;
-  password?: string;
-  role?: Role;
-};
-
 export type SearchUserRequest = {
   search?: string;
-  cursor?: number;
+  size?: number;
+  cursor?: string;
 };
 
-function toUserResponse(user: User): UserResponse {
+export function toUserResponse(user: User): UserResponse {
   return {
     username: user.username,
     name: user.name,
     role: user.role,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
   };
 }
 

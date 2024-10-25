@@ -32,4 +32,12 @@ export class UserValidation {
       .min(4, { message: minimumString(4, "Password") })
       .max(100, { message: maximumString(100, "Password") }),
   });
+  static readonly SEARCH = z.object({
+    search: z
+      .string()
+      .max(100, { message: maximumString(100, "Username") })
+      .optional(),
+    size: z.number().optional(),
+    cursor: z.string().optional(),
+  });
 }

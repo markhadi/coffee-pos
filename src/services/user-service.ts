@@ -1,16 +1,21 @@
 import bcrypt from "bcrypt";
 import { prismaClient } from "../apps/database";
 import { ResponseError } from "../errors/response-error";
+import { Pageable } from "../models/page";
 import {
   CreateUserRequest,
   LoginUserRequest,
   RefreshUserRequest,
+  SearchUserRequest,
   tokenizeUser,
+  toUserResponse,
+  UserResponse,
   UserTokenResponse,
 } from "../models/user-model";
+import { decryptCursor, encryptCursor, verifyToken } from "../utilities";
 import { UserValidation } from "../validators/user-validation";
 import { Validation } from "../validators/validation";
-import { verifyToken } from "../utilities";
+import { logger } from "../apps/logging";
 
 export class UserService {
   static async create(request: CreateUserRequest): Promise<UserTokenResponse> {
@@ -83,6 +88,58 @@ export class UserService {
     const accessToken = tokenizeUser(user, "access");
     return {
       access_token: accessToken,
+    };
+  }
+  static async search(
+    request: SearchUserRequest
+  ): Promise<Pageable<UserResponse>> {
+    const searchRequest = Validation.validate(UserValidation.SEARCH, request);
+    const filters: any[] = [];
+    let orderBy = { updated_at: "desc" as const };
+    if (searchRequest.search) {
+      filters.push({
+        OR: [
+          {
+            username: {
+              contains: searchRequest.search,
+            },
+          },
+          {
+            name: {
+              contains: searchRequest.search,
+            },
+          },
+        ],
+      });
+    }
+    const take = searchRequest.size || 10;
+    const cursor = searchRequest.cursor
+      ? { username: decryptCursor(searchRequest.cursor) }
+      : undefined;
+    const users = await prismaClient.user.findMany({
+      where: {
+        AND: filters,
+      },
+      take: take + 1,
+      skip: cursor ? 1 : 0,
+      cursor,
+      orderBy,
+    });
+    const hasMore = users.length === take + 1;
+    if (hasMore) {
+      users.pop();
+    }
+    const nextCursor =
+      users.length === take
+        ? encryptCursor(users[users.length - 1].username)
+        : undefined;
+    return {
+      data: users.map(toUserResponse),
+      paging: {
+        total: users.length,
+        cursor: nextCursor,
+        hasMore,
+      },
     };
   }
 }

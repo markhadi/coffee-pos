@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { UserService } from "../services/user-service";
 import {
   CreateUserRequest,
   LoginUserRequest,
   RefreshUserRequest,
+  SearchUserRequest,
 } from "../models/user-model";
+import { UserService } from "../services/user-service";
 
 export class UserController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -44,6 +45,19 @@ export class UserController {
       res.status(200).json({
         data: response.access_token,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async search(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request: SearchUserRequest = {
+        search: req.query?.search,
+        size: req.query?.size ? Number(req.query.size) : undefined,
+        cursor: req.query?.cursor,
+      } as SearchUserRequest;
+      const response = await UserService.search(request);
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }
