@@ -9,10 +9,16 @@ import {
   SearchUserRequest,
   tokenizeUser,
   toUserResponse,
+  UpdateUserRequest,
   UserResponse,
   UserTokenResponse,
 } from "../models/user-model";
-import { decryptCursor, encryptCursor, verifyToken } from "../utilities";
+import {
+  decryptCursor,
+  encryptCursor,
+  generateToken,
+  verifyToken,
+} from "../utilities";
 import { UserValidation } from "../validators/user-validation";
 import { Validation } from "../validators/validation";
 import { logger } from "../apps/logging";
@@ -141,5 +147,32 @@ export class UserService {
         hasMore,
       },
     };
+  }
+  static async update(request: UpdateUserRequest): Promise<UserResponse> {
+    const updateRequest = Validation.validate(UserValidation.UPDATE, request);
+    const result = await prismaClient.$transaction(async (tx) => {
+      let user = await tx.user.findUnique({
+        where: { username: updateRequest.username },
+      });
+      if (!user) {
+        throw new ResponseError(404, "User is not found");
+      }
+      if (updateRequest.password) {
+        updateRequest.password = await bcrypt.hash(updateRequest.password, 10);
+      } else {
+        updateRequest.password = user.password;
+      }
+      user = await tx.user.update({
+        where: {
+          username: user.username,
+        },
+        data: {
+          ...updateRequest,
+          refresh_token: null,
+        },
+      });
+      return user;
+    });
+    return toUserResponse(result);
   }
 }

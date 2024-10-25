@@ -40,4 +40,22 @@ export class UserValidation {
     size: z.number().optional(),
     cursor: z.string().optional(),
   });
+  static readonly UPDATE = z.object({
+    username: z
+      .string()
+      .min(4, { message: minimumString(4, "Username") })
+      .max(100, { message: maximumString(100, "Username") }),
+    password: z
+      .string()
+      .max(100, { message: maximumString(100, "Password") })
+      .optional()
+      .refine((val) => !val || val.length >= 4, {
+        message: minimumString(4, "Password"),
+      }),
+    name: z
+      .string()
+      .min(4, { message: minimumString(4, "Name") })
+      .max(100, { message: maximumString(100, "Name") }),
+    role: z.enum(role, { message: roleMessage(role) }),
+  });
 }

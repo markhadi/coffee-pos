@@ -11,3 +11,4 @@ userRouter.post(
   UserController.create
 );
 userRouter.get(Path.SearchUser, roleMiddleware("ADMIN"), UserController.search);
+userRouter.put(Path.UpdateUser, roleMiddleware("ADMIN"), UserController.update);

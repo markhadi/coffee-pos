@@ -40,6 +40,10 @@ export type SearchUserRequest = {
   cursor?: string;
 };
 
+export type UpdateUserRequest = Omit<CreateUserRequest, "password"> & {
+  password?: string;
+};
+
 export function toUserResponse(user: User): UserResponse {
   return {
     username: user.username,
