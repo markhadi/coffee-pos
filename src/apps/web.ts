@@ -12,7 +12,7 @@ export const httpServer = http.createServer(web);
 web.use(
   cors({
     origin:
-      process.env.NODE_ENV === "development" ? true : "https://yourwebsite.com",
+      process.env.NODE_ENV === "development" ? true : process.env.CLIENT_DOMAIN,
     credentials: true,
   })
 );

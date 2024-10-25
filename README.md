@@ -5,6 +5,13 @@
 
 ```
 DATABASE_URL="mysql://<your_mysql_user>:<your_mysql_password>@<your_mysql_host>:<your_mysql_port>/<your_database_name>"
+NODE_ENV=production
+PORT=<yourport>
+JWT_EXPIRES_IN=<your_setting,_example:_15m>
+JWT_ACCESS_TOKEN_SECRET=<your_access_token_scret>
+JWT_REFRESH_TOKEN_SECRET=<your_refresh_token_scret>
+USER_CURSOR_SECRET=<your_cursor_secret>
+CLIENT_DOMAIN=<your_client_domain,_example:_https://yourdomain.com>
 ```
 
 3. write command
