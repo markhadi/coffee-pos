@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/user-service";
-import { CreateUserRequest, LoginUserRequest } from "../models/user-model";
+import {
+  CreateUserRequest,
+  LoginUserRequest,
+  RefreshUserRequest,
+} from "../models/user-model";
 
 export class UserController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -16,14 +20,27 @@ export class UserController {
   }
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const request = req.body as LoginUserRequest;
+      const request: LoginUserRequest = req.body as LoginUserRequest;
       const response = await UserService.login(request);
       res.cookie("refresh_token", response.refresh_token, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 1d
-        // secure: true,
-        // sameSite: 'none',
+        secure: process.env.NODE_ENV === "development" ? false : true,
+        sameSite: process.env.NODE_ENV === "development" ? false : "none",
       });
+      res.status(200).json({
+        data: response.access_token,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async refresh(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request: RefreshUserRequest = {
+        cookie: req.cookies["refresh_token"],
+      } as RefreshUserRequest;
+      const response = await UserService.refresh(request);
       res.status(200).json({
         data: response.access_token,
       });

@@ -1,15 +1,16 @@
+import bcrypt from "bcrypt";
 import { prismaClient } from "../apps/database";
 import { ResponseError } from "../errors/response-error";
 import {
   CreateUserRequest,
   LoginUserRequest,
+  RefreshUserRequest,
   tokenizeUser,
   UserTokenResponse,
 } from "../models/user-model";
-import { generateToken } from "../utilities";
 import { UserValidation } from "../validators/user-validation";
 import { Validation } from "../validators/validation";
-import bcrypt from "bcrypt";
+import { verifyToken } from "../utilities";
 
 export class UserService {
   static async create(request: CreateUserRequest): Promise<UserTokenResponse> {
@@ -62,5 +63,26 @@ export class UserService {
       };
     });
     return result;
+  }
+  static async refresh(
+    request: RefreshUserRequest
+  ): Promise<UserTokenResponse> {
+    const refreshToken = request.cookie;
+    if (!refreshToken) {
+      throw new ResponseError(401, "No refresh token provided");
+    }
+    const user = await prismaClient.user.findFirst({
+      where: {
+        refresh_token: refreshToken,
+      },
+    });
+    if (!user) {
+      throw new ResponseError(401, "Invalid refresh token");
+    }
+    await verifyToken(refreshToken, "refresh");
+    const accessToken = tokenizeUser(user, "access");
+    return {
+      access_token: accessToken,
+    };
   }
 }
