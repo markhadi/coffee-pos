@@ -6,6 +6,7 @@ export const Path = {
   LoginUser: prefix + "/users/login",
   RefreshUser: prefix + "/users/refresh",
   UpdateUser: prefix + "/users/:username",
+  RemoveUser: prefix + "/users/:username",
   CreateCategory: prefix + "/categories",
   SearchCategory: prefix + "/categories",
   UpdateCategory: prefix + "/categories/:id",

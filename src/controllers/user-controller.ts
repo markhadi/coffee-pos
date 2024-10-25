@@ -81,4 +81,20 @@ export class UserController {
       next(error);
     }
   }
+  static async remove(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const username = req.params.username;
+      const response = await UserService.remove(username);
+      if (response.username === username) {
+        res.clearCookie("refresh_token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "development" ? false : true,
+          sameSite: process.env.NODE_ENV === "development" ? false : "none",
+        });
+      }
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

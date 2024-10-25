@@ -12,3 +12,8 @@ userRouter.post(
 );
 userRouter.get(Path.SearchUser, roleMiddleware("ADMIN"), UserController.search);
 userRouter.put(Path.UpdateUser, roleMiddleware("ADMIN"), UserController.update);
+userRouter.delete(
+  Path.RemoveUser,
+  roleMiddleware("ADMIN"),
+  UserController.remove
+);

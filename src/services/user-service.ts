@@ -22,6 +22,7 @@ import {
 import { UserValidation } from "../validators/user-validation";
 import { Validation } from "../validators/validation";
 import { logger } from "../apps/logging";
+import { Prisma, User } from "@prisma/client";
 
 export class UserService {
   static async create(request: CreateUserRequest): Promise<UserTokenResponse> {
@@ -148,15 +149,24 @@ export class UserService {
       },
     };
   }
+  static async isUserExists(
+    username: string,
+    tx: Prisma.TransactionClient
+  ): Promise<User> {
+    const user = await tx.user.findUnique({
+      where: {
+        username,
+      },
+    });
+    if (!user) {
+      throw new ResponseError(404, "User is not found");
+    }
+    return user;
+  }
   static async update(request: UpdateUserRequest): Promise<UserResponse> {
     const updateRequest = Validation.validate(UserValidation.UPDATE, request);
     const result = await prismaClient.$transaction(async (tx) => {
-      let user = await tx.user.findUnique({
-        where: { username: updateRequest.username },
-      });
-      if (!user) {
-        throw new ResponseError(404, "User is not found");
-      }
+      let user = await this.isUserExists(updateRequest.username, tx);
       if (updateRequest.password) {
         updateRequest.password = await bcrypt.hash(updateRequest.password, 10);
       } else {
@@ -169,6 +179,18 @@ export class UserService {
         data: {
           ...updateRequest,
           refresh_token: null,
+        },
+      });
+      return user;
+    });
+    return toUserResponse(result);
+  }
+  static async remove(username: string): Promise<UserResponse> {
+    const result = await prismaClient.$transaction(async (tx) => {
+      await this.isUserExists(username, tx);
+      const user = await tx.user.delete({
+        where: {
+          username,
         },
       });
       return user;
