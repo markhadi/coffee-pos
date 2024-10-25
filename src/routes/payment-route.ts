@@ -20,3 +20,8 @@ paymentRouter.put(
   roleMiddleware("ADMIN"),
   PaymentController.update
 );
+paymentRouter.delete(
+  Path.RemovePayment,
+  roleMiddleware("ADMIN"),
+  PaymentController.remove
+);

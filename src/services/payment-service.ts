@@ -115,4 +115,13 @@ export class PaymentService {
     });
     return payment;
   }
+  static async remove(id: number): Promise<PaymentMethodResponse> {
+    await this.isPaymentMethodExists(id);
+    const payment = await prismaClient.paymentMethod.delete({
+      where: {
+        id,
+      },
+    });
+    return payment;
+  }
 }

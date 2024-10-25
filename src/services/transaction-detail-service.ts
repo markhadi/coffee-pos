@@ -1,14 +1,10 @@
 import { Prisma } from "@prisma/client";
-import { prismaClient } from "../apps/database";
 import {
   CreateTransactionDetailRequest,
   TransactionDetailResponse,
 } from "../models/transaction-detail-model";
-import { TransactionDetailValidation } from "../validators/transaction-detail-validation";
-import { Validation } from "../validators/validation";
 import { ProductService } from "./product-service";
 import { TransactionService } from "./transaction-service";
-import { logger } from "../apps/logging";
 
 export class TransactionDetailService {
   static async create(
