@@ -15,6 +15,11 @@ categoryRouter.get(
   roleMiddleware("ADMIN"),
   CategoryController.search
 );
+categoryRouter.get(
+  Path.ListCategory,
+  roleMiddleware("ADMIN"),
+  CategoryController.list
+);
 categoryRouter.put(
   Path.UpdateCategory,
   roleMiddleware("ADMIN"),

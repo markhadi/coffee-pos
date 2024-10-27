@@ -50,4 +50,12 @@ export class CategoryController {
       next(error);
     }
   }
+  static async list(_: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await CategoryService.list();
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
