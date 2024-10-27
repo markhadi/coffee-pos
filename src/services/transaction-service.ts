@@ -1,9 +1,12 @@
 import { Prisma, User } from "@prisma/client";
+import { eachDayOfInterval, format, subDays } from "date-fns";
 import { prismaClient } from "../apps/database";
 import { ResponseError } from "../errors/response-error";
+import { Pageable } from "../models/page";
 import { TransactionDetailResponse } from "../models/transaction-detail-model";
 import {
   CreateTransactionRequest,
+  SalesByDateRangeRequest,
   SearchTransactionRequest,
   TransactionResponse,
 } from "../models/transaction-model";
@@ -12,8 +15,6 @@ import { TransactionValidation } from "../validators/transaction-validation";
 import { Validation } from "../validators/validation";
 import { PaymentService } from "./payment-service";
 import { TransactionDetailService } from "./transaction-detail-service";
-import { subDays, format } from "date-fns";
-import { Pageable } from "../models/page";
 
 export class TransactionService {
   static async create(
@@ -186,5 +187,50 @@ export class TransactionService {
         hasMore,
       },
     };
+  }
+  static async getSalesByDateRange(
+    request: SalesByDateRangeRequest
+  ): Promise<
+    { date: string; totalSales: number; numberOfTransactions: number }[]
+  > {
+    const salesRequest = Validation.validate(
+      TransactionValidation.SALESBYDATERANGE,
+      request
+    );
+    const { from, to } = salesRequest;
+    const dailySales = await prismaClient.productTransaction.groupBy({
+      by: ["issued_at"],
+      _sum: {
+        total_amount: true,
+      },
+      _count: {
+        transaction_id: true,
+      },
+      where: {
+        issued_at: {
+          gte: new Date(from),
+          lt: new Date(to),
+        },
+      },
+    });
+    const dateFormatString = "yyyy-MM-dd";
+    const salesByDay = eachDayOfInterval({
+      start: from,
+      end: subDays(to, 1),
+    }).map((date) => ({
+      date: format(date, dateFormatString),
+      totalSales: 0,
+      numberOfTransactions: 0,
+    }));
+    dailySales.forEach(({ issued_at, _sum, _count }) => {
+      const dayIndex = salesByDay.findIndex(
+        (day) => format(new Date(issued_at), dateFormatString) === day.date
+      );
+      if (dayIndex !== -1) {
+        salesByDay[dayIndex].totalSales += _sum.total_amount || 0;
+        salesByDay[dayIndex].numberOfTransactions += _count.transaction_id || 0;
+      }
+    });
+    return salesByDay;
   }
 }

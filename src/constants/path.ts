@@ -28,4 +28,5 @@ export const Path = {
   CountTodayTransaction: prefix + "/transactions/today-count",
   GetAverageTransaction: prefix + "/transactions/average",
   GetLast7DaysSalesTransaction: prefix + "/transactions/last-7-days-sales",
+  GetSalesByDateRange: prefix + "/transactions/sales-by-date-range",
 };

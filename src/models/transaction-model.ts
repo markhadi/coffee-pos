@@ -16,3 +16,8 @@ export type SearchTransactionRequest = {
   size?: number;
   cursor?: string;
 };
+
+export type SalesByDateRangeRequest = {
+  from: string;
+  to: string;
+};

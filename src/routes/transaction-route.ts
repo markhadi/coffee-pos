@@ -32,3 +32,8 @@ transactionRouter.get(
   roleMiddleware("ADMIN"),
   TransactionController.getLast7DaysSales
 );
+transactionRouter.get(
+  Path.GetSalesByDateRange,
+  roleMiddleware("ADMIN"),
+  TransactionController.getSalesByDateRange
+);

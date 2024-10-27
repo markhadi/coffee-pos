@@ -33,4 +33,24 @@ export class TransactionValidation {
     size: z.number().optional(),
     cursor: z.string().optional(),
   });
+  static readonly SALESBYDATERANGE = z.object({
+    from: z.string().refine(
+      (date) => {
+        const parsedDate = Date.parse(date);
+        return !isNaN(parsedDate);
+      },
+      {
+        message: "Invalid date format",
+      }
+    ),
+    to: z.string().refine(
+      (date) => {
+        const parsedDate = Date.parse(date);
+        return !isNaN(parsedDate);
+      },
+      {
+        message: "Invalid date format",
+      }
+    ),
+  });
 }

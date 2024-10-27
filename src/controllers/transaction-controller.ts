@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import {
   CreateTransactionRequest,
+  SalesByDateRangeRequest,
   SearchTransactionRequest,
 } from "../models/transaction-model";
 import { TransactionService } from "../services/transaction-service";
@@ -61,6 +62,22 @@ export class TransactionController {
       } as SearchTransactionRequest;
       const response = await TransactionService.search(request);
       res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async getSalesByDateRange(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: SalesByDateRangeRequest = {
+        from: req.query.from,
+        to: req.query.to,
+      } as SalesByDateRangeRequest;
+      const response = await TransactionService.getSalesByDateRange(request);
+      res.status(200).json({ data: response });
     } catch (error) {
       next(error);
     }
