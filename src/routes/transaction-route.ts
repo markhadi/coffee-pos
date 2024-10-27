@@ -17,3 +17,8 @@ transactionRouter.get(
   roleMiddleware("ADMIN"),
   TransactionController.countToday
 );
+transactionRouter.get(
+  Path.GetAverageTransaction,
+  roleMiddleware("ADMIN"),
+  TransactionController.getAverage
+);

@@ -102,4 +102,12 @@ export class TransactionService {
     });
     return count;
   }
+  static async getAverage(): Promise<number> {
+    const average = await prismaClient.productTransaction.aggregate({
+      _avg: {
+        total_amount: true,
+      },
+    });
+    return average._avg.total_amount || 0;
+  }
 }

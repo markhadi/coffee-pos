@@ -30,4 +30,12 @@ export class TransactionController {
       next(error);
     }
   }
+  static async getAverage(_: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await TransactionService.getAverage();
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
