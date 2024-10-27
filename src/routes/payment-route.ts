@@ -15,6 +15,7 @@ paymentRouter.get(
   roleMiddleware("ADMIN"),
   PaymentController.search
 );
+paymentRouter.get(Path.ListPayment, PaymentController.list);
 paymentRouter.put(
   Path.UpdatePayment,
   roleMiddleware("ADMIN"),

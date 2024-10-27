@@ -124,4 +124,8 @@ export class PaymentService {
     });
     return payment;
   }
+  static async list(): Promise<Array<PaymentMethodResponse>> {
+    const response = await prismaClient.paymentMethod.findMany();
+    return response;
+  }
 }

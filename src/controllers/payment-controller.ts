@@ -1,11 +1,11 @@
-import { NextFunction, Response } from "express";
-import { UserRequest } from "../types/user-request";
+import { NextFunction, Request, Response } from 'express';
+import { UserRequest } from '../types/user-request';
 import {
   CreatePaymentMethodRequest,
   SearchPaymentMethodRequest,
   UpdatePaymentMethodRequest,
-} from "../models/payment-model";
-import { PaymentService } from "../services/payment-service";
+} from '../models/payment-model';
+import { PaymentService } from '../services/payment-service';
 
 export class PaymentController {
   static async create(req: UserRequest, res: Response, next: NextFunction) {
@@ -46,6 +46,14 @@ export class PaymentController {
     try {
       const id = Number(req.params.id);
       const response = await PaymentService.remove(id);
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async list(_: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await PaymentService.list();
       res.status(200).json({ data: response });
     } catch (error) {
       next(error);
