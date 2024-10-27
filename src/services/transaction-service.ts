@@ -11,6 +11,7 @@ import { TransactionValidation } from "../validators/transaction-validation";
 import { Validation } from "../validators/validation";
 import { PaymentService } from "./payment-service";
 import { TransactionDetailService } from "./transaction-detail-service";
+import { subDays, format } from "date-fns";
 
 export class TransactionService {
   static async create(
@@ -109,5 +110,40 @@ export class TransactionService {
       },
     });
     return average._avg.total_amount || 0;
+  }
+  static async getLast7DaysSales(): Promise<
+    { date: string; totalSale: number }[]
+  > {
+    const today = new Date();
+    const dateFormatString = "MM-dd";
+    const sevenDaysAgo = subDays(today, 7);
+    const dailySales = await prismaClient.productTransaction.groupBy({
+      by: ["issued_at"],
+      _sum: {
+        total_amount: true,
+      },
+      where: {
+        issued_at: {
+          gte: sevenDaysAgo,
+          lt: today,
+        },
+      },
+    });
+    const salesByDay = Array.from({ length: 7 }, (_, i) => {
+      const date = subDays(today, i);
+      return {
+        date: format(date, dateFormatString),
+        totalSale: 0,
+      };
+    }).reverse();
+    dailySales.forEach(({ issued_at, _sum }) => {
+      const dayIndex = salesByDay.findIndex(
+        (day) => format(new Date(issued_at), dateFormatString) === day.date
+      );
+      if (dayIndex !== -1) {
+        salesByDay[dayIndex].totalSale += _sum.total_amount || 0;
+      }
+    });
+    return salesByDay;
   }
 }

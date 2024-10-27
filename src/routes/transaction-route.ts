@@ -22,3 +22,8 @@ transactionRouter.get(
   roleMiddleware("ADMIN"),
   TransactionController.getAverage
 );
+transactionRouter.get(
+  Path.GetLast7DaysSalesTransaction,
+  roleMiddleware("ADMIN"),
+  TransactionController.getLast7DaysSales
+);

@@ -38,4 +38,16 @@ export class TransactionController {
       next(error);
     }
   }
+  static async getLast7DaysSales(
+    _: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const response = await TransactionService.getLast7DaysSales();
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
