@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateTransactionRequest } from "../models/transaction-model";
+import {
+  CreateTransactionRequest,
+  SearchTransactionRequest,
+} from "../models/transaction-model";
 import { TransactionService } from "../services/transaction-service";
 import { UserRequest } from "../types/user-request";
 
@@ -46,6 +49,18 @@ export class TransactionController {
     try {
       const response = await TransactionService.getLast7DaysSales();
       res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async search(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request: SearchTransactionRequest = {
+        size: req.query?.size ? Number(req.query.size) : undefined,
+        cursor: req.query?.cursor,
+      } as SearchTransactionRequest;
+      const response = await TransactionService.search(request);
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }

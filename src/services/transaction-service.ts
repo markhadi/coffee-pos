@@ -4,6 +4,7 @@ import { ResponseError } from "../errors/response-error";
 import { TransactionDetailResponse } from "../models/transaction-detail-model";
 import {
   CreateTransactionRequest,
+  SearchTransactionRequest,
   TransactionResponse,
 } from "../models/transaction-model";
 import { generateTransactionId } from "../utilities";
@@ -12,6 +13,7 @@ import { Validation } from "../validators/validation";
 import { PaymentService } from "./payment-service";
 import { TransactionDetailService } from "./transaction-detail-service";
 import { subDays, format } from "date-fns";
+import { Pageable } from "../models/page";
 
 export class TransactionService {
   static async create(
@@ -145,5 +147,44 @@ export class TransactionService {
       }
     });
     return salesByDay;
+  }
+  static async search(
+    request: SearchTransactionRequest
+  ): Promise<Pageable<TransactionResponse>> {
+    const searchRequest = Validation.validate(
+      TransactionValidation.SEARCH,
+      request
+    );
+    const filters: any[] = [];
+    let orderBy = { issued_at: "desc" as const };
+    const take = searchRequest.size || 10;
+    const cursor = searchRequest.cursor
+      ? { transaction_id: searchRequest.cursor }
+      : undefined;
+    const transactions = await prismaClient.productTransaction.findMany({
+      where: {
+        AND: filters,
+      },
+      take: take + 1,
+      skip: cursor ? 1 : 0,
+      cursor,
+      orderBy,
+    });
+    const hasMore = transactions.length === take + 1;
+    if (hasMore) {
+      transactions.pop();
+    }
+    const nextCursor =
+      transactions.length === take
+        ? transactions[transactions.length - 1].transaction_id
+        : undefined;
+    return {
+      data: transactions,
+      paging: {
+        total: transactions.length,
+        cursor: nextCursor,
+        hasMore,
+      },
+    };
   }
 }

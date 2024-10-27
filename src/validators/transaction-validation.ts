@@ -29,4 +29,8 @@ export class TransactionValidation {
       })
     ),
   });
+  static readonly SEARCH = z.object({
+    size: z.number().optional(),
+    cursor: z.string().optional(),
+  });
 }

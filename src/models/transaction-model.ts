@@ -11,3 +11,8 @@ export type CreateTransactionRequest = {
   service_charge: number;
   transaction_items: Omit<CreateTransactionDetailRequest, "transaction_id">[];
 };
+
+export type SearchTransactionRequest = {
+  size?: number;
+  cursor?: string;
+};
