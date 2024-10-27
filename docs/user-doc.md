@@ -71,7 +71,7 @@ Request Query:
 
 - search: test (it searches by username or name)
 - size: 1 (if undefined set to 10 as default value)
-- cursor: undefined
+- cursor: undefined | number -> get from id
 
 Response Body (Success):
 

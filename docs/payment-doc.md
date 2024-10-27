@@ -84,7 +84,7 @@ Request Query:
 
 - name: test
 - size: 1 (if undefined set to 10 as default value)
-- cursor: undefined
+- cursor: undefined | number -> get from id
 
 Response Body (Success):
 
