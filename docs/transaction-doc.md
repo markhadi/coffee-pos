@@ -77,7 +77,7 @@ Response Body (Success):
 
 ## Get Todays Sales
 
-Endpoint: GET /api/transactions/today-sales
+Endpoint: GET /api/transactions/today-sales (admin only)
 
 Request Header:
 
@@ -91,7 +91,7 @@ Response Body (Success):
 
 ## Count Todays Transactions
 
-Endpoint: GET /api/transactions/today-count
+Endpoint: GET /api/transactions/today-count (admin only)
 
 Request Header:
 
@@ -105,7 +105,7 @@ Response Body (Success):
 
 ## Get Average
 
-Endpoint: GET /api/transactions/average
+Endpoint: GET /api/transactions/average (admin only)
 
 Request Header:
 
@@ -119,7 +119,7 @@ Response Body (Success):
 
 ## Get Last 7 Days Sales
 
-Endpoint: GET /api/transactions/last-7-days-sales
+Endpoint: GET /api/transactions/last-7-days-sales (admin only)
 
 Request Header:
 
@@ -143,7 +143,7 @@ Response Body (Success):
 
 ## Search / List of Transactions using cursor based
 
-Endpoint: GET /api/transactions
+Endpoint: GET /api/transactions (admin only)
 
 Request Header:
 
@@ -178,7 +178,7 @@ Response Body (Success):
 
 ## Get Sales by Date Range
 
-Endpoint: GET /api/transactions
+Endpoint: GET /api/transactions (admin only)
 
 Request Header:
 

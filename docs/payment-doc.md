@@ -37,7 +37,7 @@ Response Body (Success):
 
 ## List Payment (get all payments)
 
-Endpoint: GET /api/payments/list (admin)
+Endpoint: GET /api/payments/list
 
 Request Header:
 
