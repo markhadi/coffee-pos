@@ -75,4 +75,19 @@ export class TransactionService {
     }
     return transaction;
   }
+  static async getTodaySales(): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const totalSales = await prismaClient.productTransaction.aggregate({
+      _sum: {
+        total_amount: true,
+      },
+      where: {
+        issued_at: {
+          gte: today,
+        },
+      },
+    });
+    return totalSales._sum.total_amount || 0;
+  }
 }

@@ -49,7 +49,7 @@ model Product {
   code                String   @unique @db.VarChar(10)
   name                String   @db.VarChar(100)
   stock               Int
-  price               Int
+  price               Float
   category_id         Int
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
@@ -84,7 +84,7 @@ model ProductTransaction {
   transaction_id    String   @id @db.VarChar(10)
   customer_name     String   @db.VarChar(100)
   total_quantity    Int
-  total_amount      Int
+  total_amount      Float
   payment_method_id Int
   payment_method    String   @db.VarChar(100)
   username          String   @db.VarChar(100)
@@ -102,11 +102,11 @@ model ProductTransactionDetail {
   transaction_id        String @db.VarChar(10)
   product_id            Int
   product_name          String @db.VarChar(100)
-  product_price         Int
+  product_price         Float
   product_category_id   Int
   product_category_name String @db.VarChar(100)
   quantity              Int
-  amount                Int
+  amount                Float
 
   transaction ProductTransaction @relation(fields: [transaction_id], references: [transaction_id])
 

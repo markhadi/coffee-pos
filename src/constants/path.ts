@@ -23,4 +23,5 @@ export const Path = {
   RemovePayment: prefix + "/payments/:id",
   ListPayment: prefix + "/payments/list",
   CreateTransaction: prefix + "/transactions",
+  GetTodaySales: prefix + "/transactions/today-sales",
 };
