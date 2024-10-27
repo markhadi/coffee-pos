@@ -22,4 +22,12 @@ export class TransactionController {
       next(error);
     }
   }
+  static async countToday(_: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await TransactionService.countToday();
+      res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

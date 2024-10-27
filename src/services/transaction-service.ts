@@ -90,4 +90,16 @@ export class TransactionService {
     });
     return totalSales._sum.total_amount || 0;
   }
+  static async countToday(): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const count = await prismaClient.productTransaction.count({
+      where: {
+        issued_at: {
+          gte: today,
+        },
+      },
+    });
+    return count;
+  }
 }

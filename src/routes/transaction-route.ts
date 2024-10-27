@@ -8,7 +8,12 @@ export const transactionRouter = Router();
 // all roles can access these routes
 transactionRouter.post(Path.CreateTransaction, TransactionController.create);
 transactionRouter.get(
-  Path.GetTodaySales,
+  Path.GetTodaySalesTransaction,
   roleMiddleware("ADMIN"),
   TransactionController.getTodaySales
+);
+transactionRouter.get(
+  Path.CountTodayTransaction,
+  roleMiddleware("ADMIN"),
+  TransactionController.countToday
 );
