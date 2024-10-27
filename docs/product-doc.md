@@ -68,7 +68,11 @@ Response Body (Success):
       "updated_by_username": "testuser",
       "stock": 10,
       "price": 10000,
-      "category_id": 1
+      "category_id": 1,
+      "category": {
+        "id": 1,
+        "name": "test category"
+      }
     }
   ],
   "paging": {

@@ -14,7 +14,8 @@ Request Body:
 {
   "username": "test",
   "password": "test",
-  "name": "test"
+  "name": "test",
+  "role": "ADMIN" | "CASHIER"
 }
 ```
 
